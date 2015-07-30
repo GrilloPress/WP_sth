@@ -29,7 +29,6 @@ get_header(); ?>
 			<?php while ( have_posts() ) : the_post(); ?>
 
 				<?php
-
 					/*
 					 * Include the Post-Format-specific template for the content.
 					 * If you want to override this in a child theme, then include a file
@@ -55,6 +54,5 @@ get_header(); ?>
       </aside>
     </div>
 	</div><!-- #primary -->
-
 
 <?php get_footer(); ?>
