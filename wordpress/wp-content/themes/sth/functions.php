@@ -126,46 +126,17 @@ function sth_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'sth_scripts' );
 
-function wp_bootstrap_main_nav() {
-  // Display the WordPress menu if available
-  wp_nav_menu( 
-    array( 
-      'menu' => 'main_nav', /* menu name */
-      'menu_class' => 'nav navbar-nav',
-      'theme_location' => 'main_nav', /* where in the theme it's assigned */
-      'container' => 'false', /* container class */
-      'fallback_cb' => 'wp_bootstrap_main_nav_fallback', /* menu fallback */
-      'walker' => new Bootstrap_walker()
-    )
-  );
-}
+
+
+
 
 // Sidebars & Widgetizes Areas
-function sth_bootstrap_register_sidebars() {
-  register_sidebar(array(
-  	'id' => 'sidebar1',
-  	'name' => 'Main Sidebar',
-  	'description' => 'Used on every page BUT the homepage page template.',
-  	'before_widget' => '<div id="%1$s" class="widget %2$s">',
-  	'after_widget' => '</div>',
-  	'before_title' => '<h4 class="widgettitle">',
-  	'after_title' => '</h4>',
-  ));
-    
-  register_sidebar(array(
-  	'id' => 'sidebar2',
-  	'name' => 'Homepage Sidebar',
-  	'description' => 'Used only on the homepage page template.',
-  	'before_widget' => '<div id="%1$s" class="widget %2$s">',
-  	'after_widget' => '</div>',
-  	'before_title' => '<h4 class="widgettitle">',
-  	'after_title' => '</h4>',
-  ));
+function sth_register_footer() {
     
   register_sidebar(array(
     'id' => 'footer1',
     'name' => 'Footer 1',
-    'before_widget' => '<div id="%1$s" class="widget col-sm-4 %2$s">',
+    'before_widget' => '<div id="%1$s" class="widget col-sm-3 %2$s">',
     'after_widget' => '</div>',
     'before_title' => '<h4 class="widgettitle">',
     'after_title' => '</h4>',
@@ -173,7 +144,7 @@ function sth_bootstrap_register_sidebars() {
   register_sidebar(array(
     'id' => 'footer2',
     'name' => 'Footer 2',
-    'before_widget' => '<div id="%1$s" class="widget col-sm-4 %2$s">',
+    'before_widget' => '<div id="%1$s" class="widget col-sm-3 %2$s">',
     'after_widget' => '</div>',
     'before_title' => '<h4 class="widgettitle">',
     'after_title' => '</h4>',
@@ -181,12 +152,20 @@ function sth_bootstrap_register_sidebars() {
   register_sidebar(array(
     'id' => 'footer3',
     'name' => 'Footer 3',
-    'before_widget' => '<div id="%1$s" class="widget col-sm-4 %2$s">',
+    'before_widget' => '<div id="%1$s" class="widget col-sm-3 %2$s">',
     'after_widget' => '</div>',
     'before_title' => '<h4 class="widgettitle">',
     'after_title' => '</h4>',
   ));
-    
+  
+  register_sidebar(array(
+    'id' => 'footer4',
+    'name' => 'Footer 4',
+    'before_widget' => '<div id="%1$s" class="widget col-sm-3 %2$s">',
+    'after_widget' => '</div>',
+    'before_title' => '<h4 class="widgettitle">',
+    'after_title' => '</h4>',
+  ));
     
   /* 
   to add more sidebars or widgetized areas, just copy
@@ -203,11 +182,15 @@ function sth_bootstrap_register_sidebars() {
   
   */
 } // don't remove this bracket!
-add_action( 'widgets_init', 'sth_bootstrap_register_sidebars' );
+add_action( 'widgets_init', 'sth_register_footer' );
+
+
+
+
 
 // enqueue javascript
-if( !function_exists( "wp_bootstrap_theme_js" ) ) {  
-  function wp_bootstrap_theme_js(){
+if( !function_exists( "sth_theme_js" ) ) {  
+  function sth_theme_js(){
     if ( !is_admin() ){
       if ( is_singular() AND comments_open() AND ( get_option( 'thread_comments' ) == 1) ) 
         wp_enqueue_script( 'comment-reply' );
@@ -233,84 +216,17 @@ if( !function_exists( "wp_bootstrap_theme_js" ) ) {
     
   }
 }
-add_action( 'wp_enqueue_scripts', 'wp_bootstrap_theme_js' );
-
-// Menu output mods
-class Bootstrap_walker extends Walker_Nav_Menu{
-  function start_el(&$output, $object, $depth = 0, $args = Array(), $current_object_id = 0){
-	 global $wp_query;
-	 $indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
-	
-	 $class_names = $value = '';
-	
-		// If the item has children, add the dropdown class for bootstrap
-		if ( $args->has_children ) {
-			$class_names = "dropdown ";
-		}
-	
-		$classes = empty( $object->classes ) ? array() : (array) $object->classes;
-		
-		$class_names .= join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $object ) );
-		$class_names = ' class="'. esc_attr( $class_names ) . '"';
-       
-   	$output .= $indent . '<li id="menu-item-'. $object->ID . '"' . $value . $class_names .'>';
-   	$attributes  = ! empty( $object->attr_title ) ? ' title="'  . esc_attr( $object->attr_title ) .'"' : '';
-   	$attributes .= ! empty( $object->target )     ? ' target="' . esc_attr( $object->target     ) .'"' : '';
-   	$attributes .= ! empty( $object->xfn )        ? ' rel="'    . esc_attr( $object->xfn        ) .'"' : '';
-   	$attributes .= ! empty( $object->url )        ? ' href="'   . esc_attr( $object->url        ) .'"' : '';
-   	// if the item has children add these two attributes to the anchor tag
-   	if ( $args->has_children ) {
-		  $attributes .= ' class="dropdown-toggle" data-toggle="dropdown"';
-    }
-    $item_output = $args->before;
-    $item_output .= '<a'. $attributes .'>';
-    $item_output .= $args->link_before .apply_filters( 'the_title', $object->title, $object->ID );
-    $item_output .= $args->link_after;
-    // if the item has children add the caret just before closing the anchor tag
-    if ( $args->has_children ) {
-    	$item_output .= '<b class="caret"></b></a>';
-    }
-    else {
-    	$item_output .= '</a>';
-    }
-    $item_output .= $args->after;
-    $output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $object, $depth, $args );
-  } // end start_el function
-        
-  function start_lvl(&$output, $depth = 0, $args = Array()) {
-    $indent = str_repeat("\t", $depth);
-    $output .= "\n$indent<ul class=\"dropdown-menu\">\n";
-  }
-      
-	function display_element( $element, &$children_elements, $max_depth, $depth=0, $args, &$output ){
-    $id_field = $this->db_fields['id'];
-    if ( is_object( $args[0] ) ) {
-        $args[0]->has_children = ! empty( $children_elements[$element->$id_field] );
-    }
-    return parent::display_element( $element, $children_elements, $max_depth, $depth, $args, $output );
-  }        
-}
-
-
-function wp_bootstrap_add_active_class($classes, $item) {
-	if( $item->menu_item_parent == 0 && in_array('current-menu-item', $classes) ) {
-    $classes[] = "active";
-	}
-  
-  return $classes;
-}
-// Add Twitter Bootstrap's standard 'active' class name to the active nav link item
-add_filter('nav_menu_css_class', 'wp_bootstrap_add_active_class', 10, 2 );
-
-/**
- * Implement the Custom Header feature.
- */
-require get_template_directory() . '/inc/custom-header.php';
+add_action( 'wp_enqueue_scripts', 'sth_theme_js' );
 
 /**
  * Custom template tags for this theme.
  */
 require get_template_directory() . '/inc/template-tags.php';
+
+/**
+ * Bootstrap Walker and Nav Customization 
+ */
+require get_template_directory() . '/inc/bootstrap_nav.php';
 
 /**
  * Custom functions that act independently of the theme templates.
