@@ -1,4 +1,12 @@
 @charset "UTF-8";
+/*
+Theme Name: WP STH
+Theme URI: http://www.sth.nhs.uk/
+Description: A simple starter theme for all STH based WordPress themes
+Version: 0.1
+Author: Andrew Duckworth
+Author URI: https://github.com/GrilloPress
+*/
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 /*!
  * Bootstrap v3.3.5 (http://getbootstrap.com)
@@ -8788,4 +8796,12 @@ button.close {
 /* line 19, ../sass/_navbar.scss */
 .icon-bar {
   color: white;
+}
+
+/* line 1, ../sass/_footer.scss */
+.site-footer {
+  background-color: #90A4AE;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin-top: 15px;
 }
